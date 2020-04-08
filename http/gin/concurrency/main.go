@@ -10,7 +10,12 @@ var (
 	num = 0
 )
 
-//用来测试web环境 并发对于单个变量 操作的表现情况
+//用来测试web环境 并发 安全性
+//结论：无法保证安全性 虽然出现的概率并不会太高 但是一定会出现
+//误区：千万不要使用单核机器进行测试
+//google cloud：单核表现正常
+//aws ec2: 8核出panic
+//win 10: 也会painc
 func main() {
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
