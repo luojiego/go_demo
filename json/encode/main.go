@@ -21,7 +21,7 @@ type Test struct {
 
 //不能正常被调用
 func (t *Test) MarshalJSON() ([]byte, error) {
-	return []byte("{\"name\":\"" + t.Name +"\",\"age\":" + strconv.FormatInt(int64(t.Age), 10) + "}"), nil
+	return []byte("{\"name\":\"" + t.Name + "\",\"age\":" + strconv.FormatInt(int64(t.Age), 10) + "}"), nil
 }
 
 //正确的做法
@@ -31,7 +31,7 @@ func (t *Test) MarshalJSON() ([]byte, error) {
 
 type Data struct {
 	Test
-	Number int
+	Number  int
 	Message string
 }
 
@@ -48,11 +48,11 @@ func main() {
 	//proto文件转pb.go文件中 大量使用了omitempty
 	t2 := struct {
 		Message string `json:",omitempty"`
-		Age int
-		Number int `json:"number,omitempty"`
-	} {
+		Age     int
+		Number  int `json:"number,omitempty"`
+	}{
 		Message: "<>&U +2028U +2029",
-		Age: 30,
+		Age:     30,
 	}
 	r2, _ := json.Marshal(t2)
 	fmt.Println(string(r2)) //{"Message":"\u003c\u003e\u0026U +2028U +2029","Age":30}
@@ -65,13 +65,13 @@ func main() {
 	//		同时在第一版本的proto go的API中，大量也使用了`json:"-"`
 	//5. 由于需要和 JS 打交道 也可以使得`json:",string"` 将浮点，整数或者 boolean 在序列化的时候以 string 的格式输出
 	t3 := struct {
-		Message string `json:",omitempty"`
-		Age int  `json:"-"`
-		Number int `json:"number"`
-		Index int `json:"-,"`
-		Score float64 `json:",string"`
-	} {
-		Age: 30,
+		Message string  `json:",omitempty"`
+		Age     int     `json:"-"`
+		Number  int     `json:"number"`
+		Index   int     `json:"-,"`
+		Score   float64 `json:",string"`
+	}{
+		Age:   30,
 		Index: 710,
 		Score: 98.99,
 	}
@@ -86,6 +86,31 @@ func main() {
 
 	//可见性的处理
 	visibilityProcess()
+
+	//关于 Map 的 json 的 Marshal
+	// key 必须满足以下条件
+	//1 字符串类型 那么 byte[] 呢？Invalid map key type: the comparison operators == and != must be fully defined for key type
+	//2 整型
+	//3 实现了encoding.TextMarshaler方法
+
+	/*m := make(map[[2]byte]string)
+
+	m[[2]byte{'a','b'}] = "ab"
+	m[[2]byte{'A','B'}] = "AB"
+
+	fmt.Printf("%+v\n", m)
+
+	mapResult, err := json.Marshal(m)
+	if err != nil {
+		panic(err) //panic: json: unsupported type: map[[2]uint8]string
+	}*/
+
+	//fmt.Println(string(mapResult))
+
+}
+
+var sType struct {
+	D []byte
 }
 
 func inheritByJsonMarshal() {
@@ -94,7 +119,6 @@ func inheritByJsonMarshal() {
 			"LuoJie", 30,
 		},
 		Number: 1539905,
-
 	}
 
 	//由于 MarshalJSON 为指针接收者 直接序列化 不会有效果（此处有比较大的疑惑）
@@ -127,17 +151,16 @@ func (t Test2) MarshalText() ([]byte, error) {
 
 type Data2 struct {
 	Test2
-	Number int
+	Number  int
 	Message string
 }
 
-func inheritByMarshalText()  {
+func inheritByMarshalText() {
 	t := Data2{
 		Test2: Test2{
 			"LuoJie", 30,
 		},
 		Number: 1539905,
-
 	}
 
 	r1, _ := json.Marshal(t)
@@ -147,7 +170,7 @@ func inheritByMarshalText()  {
 	fmt.Println(string(r1)) //"{\"name\":\"LuoJie\",\"age\":30}"
 
 	r2, _ := json.Marshal(&t)
-	fmt.Println(string(r2))	//"{\"name\":\"LuoJie\",\"age\":30}"
+	fmt.Println(string(r2)) //"{\"name\":\"LuoJie\",\"age\":30}"
 
 	t1 := &Data2{} //&Data1{}
 	err := json.Unmarshal(r1, t1)
@@ -162,7 +185,7 @@ func inheritByMarshalText()  {
 
 //因为直接调用json.MarshalJSON "<",">","&"会被转义，当有需求是不能被转义的时候
 //需要用encode.SetEscapeHTML(false)来进行encode
-func SetEscapeHTMLFalse()  {
+func SetEscapeHTMLFalse() {
 	type Test struct {
 		Content string
 	}
@@ -172,7 +195,7 @@ func SetEscapeHTMLFalse()  {
 	jsonEncoder := json.NewEncoder(bf)
 	jsonEncoder.SetEscapeHTML(false)
 	jsonEncoder.Encode(t)
-	fmt.Println(bf.String())//{"Content":"http://www.baidu.com?id=123&test=1"}
+	fmt.Println(bf.String()) //{"Content":"http://www.baidu.com?id=123&test=1"}
 	//参考：https://hacpai.com/article/1524558037151
 }
 
@@ -183,17 +206,17 @@ func SetEscapeHTMLFalse()  {
 //当 slice 为空时，序列化的结果为[]
 func SliceProcess() {
 	type Test struct {
-		S1 []int
-		S2 []string
-		S3 []byte
-		NilSlice []int
+		S1         []int
+		S2         []string
+		S3         []byte
+		NilSlice   []int
 		EmptySlice []int
 	}
 
 	t := Test{
-		S1 : []int{1,2,3},
-		S2 : []string{"1","2","3"},
-		S3 : []byte{'1', '2', '3'},
+		S1:         []int{1, 2, 3},
+		S2:         []string{"1", "2", "3"},
+		S3:         []byte{'1', '2', '3'},
 		EmptySlice: make([]int, 0),
 	}
 
@@ -202,14 +225,14 @@ func SliceProcess() {
 
 }
 
-func visibilityProcess()  {
+func visibilityProcess() {
 	type Test1 struct {
 		Name string
-		Age int
+		Age  int
 	}
 	type Test2 struct {
 		NickName string
-		Age int
+		Age      int
 	}
 	type Data1 struct {
 		Test1
@@ -227,7 +250,7 @@ func visibilityProcess()  {
 
 	type Test3 struct {
 		Name string
-		Age int `json:"age"`
+		Age  int `json:"age"`
 	}
 	type Data2 struct {
 		Test3
@@ -244,7 +267,7 @@ func visibilityProcess()  {
 
 	type Test4 struct {
 		NickName string
-		Age int `json:"age"`
+		Age      int `json:"age"`
 	}
 	type Data3 struct {
 		Test3
