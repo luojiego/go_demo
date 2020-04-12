@@ -107,10 +107,59 @@ func main() {
 
 	//fmt.Println(string(mapResult))
 
+	tryStructAsMapKey()
+	integerAsMapKey()
+	boolAsMapKey()
 }
 
-var sType struct {
-	D []byte
+type sType struct {
+	Name string
+	Age  int
+}
+
+func (s sType) MarshalText() (text []byte, err error) {
+	return []byte(s.Name), nil
+}
+
+func tryStructAsMapKey() {
+	m := make(map[sType]string, 0)
+
+	m[sType{"luojie", 30}] = "luojie"
+	m[sType{"LuoJie", 31}] = "LuoJie"
+
+	r, err := json.Marshal(m)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(r))
+}
+
+func integerAsMapKey() {
+	m := make(map[int]string)
+	m[0] = "ling"
+	m[1] = "yi"
+	m[2] = "er"
+
+	r, err := json.Marshal(m)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(r))
+}
+
+func boolAsMapKey() {
+	m := make(map[bool]string)
+	m[false] = "ling"
+	m[true] = "yi"
+
+	r, err := json.Marshal(m)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(r))
 }
 
 func inheritByJsonMarshal() {
