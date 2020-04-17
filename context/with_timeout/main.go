@@ -32,7 +32,7 @@ func work(ctx context.Context) error {
 
 func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
-	defer cancel()
+	defer cancel() //goroutine 执行结束 立刻释放资源
 
 	fmt.Println("Hey, I'm going to do some work")
 
