@@ -13,5 +13,6 @@ func main() {
 	r.GET("/hello", func(c *gin.Context) {
 		c.String(http.StatusOK, "<h1>hello</h1>")
 	})
-	r.Run(":7001")
+	r.Static("/.well-known", "./data")
+	r.Run(":80")
 }
