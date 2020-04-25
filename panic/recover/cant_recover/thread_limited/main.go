@@ -35,3 +35,27 @@ func main() {
 
 	fmt.Println("all goroutines done")
 }
+
+//在 Ubuntu 18.04 上的输出
+//在 Win10 上的输出比较随机
+/*
+change max threads 10000->10
+start goroutine: #0
+start goroutine #0 ok
+start goroutine: #1
+start goroutine #1 ok
+start goroutine: #2
+start goroutine #2 ok
+start goroutine: #3
+start goroutine #3 ok
+start goroutine: #4
+start goroutine #4 ok
+start goroutine: #5
+start goroutine #5 ok
+start goroutine: #6
+start goroutine #6 ok
+start goroutine: #7
+runtime: program exceeds 10-thread limit
+fatal error: thread exhaustion
+
+*/
