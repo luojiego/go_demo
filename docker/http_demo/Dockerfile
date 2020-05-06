@@ -1,4 +1,4 @@
-FROM golang:alpine
+FROM golang:alpine AS builder
 
 ENV GO11MODULE=on \
     CGO_ENABLED=0 \
@@ -11,10 +11,10 @@ COPY . .
 
 RUN go build -o app .
 
-WORKDIR /dist
+FROM scratch
 
-RUN cp /build/app .
+COPY --from=builder /build/app /
 
 EXPOSE 9090
 
-CMD ["/dist/app"]
+CMD ["/app"]
