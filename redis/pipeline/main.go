@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-redis/redis"
+	"time"
 )
 
 func main() {
@@ -15,18 +16,22 @@ func main() {
 	if err != nil {
 		panic("ping: " + err.Error())
 	}
-	fmt.Println(result)
+	fmt.Println("ping: ", result)
+	/*m := map[string]*redis.StringCmd{}
 	pipeline := c.Pipeline()
-	pipeline.Get("A")
-	pipeline.Get("B")
+	m["a"] = pipeline.Get("a")
+	m["b"] = pipeline.Get("b")*/
 
+	pipeline := c.Pipeline()
+	pipeline.HSet("10001", "name", "Roger")
+	pipeline.Expire("10001", 150*time.Second)
 	cmders, err := pipeline.Exec()
 	if err != nil {
 		panic("exec: " + err.Error())
 	}
 
 	for _, exec := range cmders {
-		cmd := exec.(*redis.StringCmd)
+		cmd := exec.(*redis.BoolCmd)
 		s, err := cmd.Result()
 		if err != nil {
 			panic(err)
