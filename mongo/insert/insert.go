@@ -48,13 +48,29 @@ func insertMany(ctx context.Context, collection mongo.Collection) error {
 
 func insertTest(ctx context.Context, collection *mongo.Collection) error {
 	d := struct {
-		Id    int    `json:"id" bson:"_id"`
-		Name  string `json:"name"`
-		Score int    `json:"score"`
+		Id    int
+		Name  string `json:"name" bson:"name"`
+		Score int    `json:"score" bson:"score"`
 	}{
-		Id:    18972,
-		Name:  "zbj",
-		Score: 32,
+		Id:    18973,
+		Name:  "tc",
+		Score: 33,
+	}
+	one, err := collection.InsertOne(ctx, d)
+	if err != nil {
+		return err
+	}
+	fmt.Println(one.InsertedID)
+	return nil
+}
+
+func insertFriends(ctx context.Context, collection *mongo.Collection) error {
+	d := struct {
+		Id      int   `json:"id" bson:"_id"`
+		Friends []int `json:"friends" bson:"friends"`
+	}{
+		Id:      10381,
+		Friends: []int{10203, 10230, 13082, 14903, 15309, 10020},
 	}
 	one, err := collection.InsertOne(ctx, d)
 	if err != nil {
@@ -73,6 +89,8 @@ func main() {
 	}
 
 	//fmt.Println(client)
-	collection := client.Database("game").Collection("users")
-	insertTest(ctx, collection)
+	collection := client.Database("game").Collection("friends")
+	//insertTest(ctx, collection)
+
+	insertFriends(ctx, collection)
 }
