@@ -15,7 +15,7 @@ func main() {
 	defer db.Close()
 
 	count := 0
-	err = db.Get(&count, "SELECT COUNT(*) FROM acoount_data")
+	err = db.Get(&count, "SELECT COUNT(*) FROM account_data")
 	if err != nil {
 		panic(err)
 	}
