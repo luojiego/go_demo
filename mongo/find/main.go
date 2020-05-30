@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -13,7 +14,7 @@ import (
 
 func Find(ctx context.Context, collection *mongo.Collection) {
 	fmt.Println("---------------------------Find------------------------------")
-	cur, err := collection.Find(ctx, bson.D{})
+	cur, err := collection.Find(ctx, bson.D{}, options.Find().SetProjection(bson.M{"age": 1}))
 	if err != nil {
 		log.Fatal("Find: ", err)
 	}
@@ -58,18 +59,207 @@ func FindOne(ctx context.Context, collection *mongo.Collection) {
 	fmt.Println("---------------------------FindOne------------------------------")
 }
 
-func main() {
-	ctx := context.Background()
+type Info struct {
+	Address     string `json:"address" bson:"address"`
+	PhoneNumber string `json:"phone_number" bson:"phone_number"`
+}
+
+type Data struct {
+	Name string `json:"name" bson:"name"`
+	Info Info
+}
+
+func insert(ctx context.Context, collection *mongo.Collection) error {
+	d := Data{
+		Name: "罗杰",
+		Info: Info{
+			Address:     "陕西省西安市",
+			PhoneNumber: "1539900000",
+		},
+	}
+
+	one, err := collection.InsertOne(ctx, d)
+	if err != nil {
+		return err
+	}
+	fmt.Println(one.InsertedID)
+	return nil
+}
+
+func find1(ctx context.Context, collection *mongo.Collection) (info Data, err error) {
+	objectId, _ := primitive.ObjectIDFromHex("5ecf97fbd9c5c823e699eeb4")
+	err = collection.FindOne(ctx,
+		bson.D{{"_id", objectId}},
+		options.FindOne().SetProjection(bson.D{{"info", 1}, {"_id", 0}}),
+	).Decode(&info)
+	fmt.Println(info)
+	return info, err
+}
+
+var (
+	ctx        = context.Background()
+	collection *mongo.Collection
+)
+
+func init() {
+	ctx = context.Background()
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://192.168.196.50:27017"))
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(client)
+	//fmt.Println(client)
 
-	collection := client.Database("game").Collection("users")
-	Find(ctx, collection)
+	collection = client.Database("game").Collection("test")
+}
 
-	FindOne(ctx, collection)
+func main() {
+
+	//Find(ctx, collection)
+
+	//FindOne(ctx, collection)
+
+	//insert(ctx, collection)
+
+	//find1(ctx, collection)
+
+	//insertMany(ctx, collection)
+
+	//findTest1()
+
+	insertOne()
+
+}
+
+func findTest() {
+	cur, err := collection.Find(
+		ctx,
+		bson.D{
+			/*{"instock", bson.D{
+				{"qty", 5},
+				{"warehouse", "A"},
+			}},*/
+			{"instock.warehouse", "A"},
+		})
+
+	defer cur.Close(ctx)
+	for cur.Next(ctx) {
+		var result bson.M
+		err := cur.Decode(&result)
+		if err != nil {
+			log.Fatal("Decode: ", err)
+		}
+		// do something with result....
+		fmt.Println("result: ", result)
+	}
+	//r := bson.D{}
+	//err = cursor.Decode(&r)
+
+	fmt.Println(err)
+}
+
+func findTest1() {
+	one := collection.FindOne(
+		ctx,
+		bson.M{
+			/*{"instock", bson.D{
+				{"qty", 5},
+				{"warehouse", "A"},
+			}},*/
+			"instock.warehouse": "A",
+		})
+
+	r := bson.D{}
+	err := one.Decode(&r)
+
+	fmt.Println(err)
+}
+
+func insertOne() {
+	docs := &bson.D{{"item", "journal"}, {"instock", bson.A{
+		bson.D{
+			{"warehouse", "A"},
+			{"qty", 5},
+		},
+		bson.D{
+			{"warehouse", "C"},
+			{"qty", 15},
+		},
+	}}}
+	one, err := collection.InsertOne(context.Background(), docs)
+	if err != nil {
+		panic(err)
+	}
+
+	s := one.InsertedID.(primitive.ObjectID).Hex()
+	fmt.Println(s)
+}
+
+func insertMany(ctx context.Context, collection *mongo.Collection) {
+	docs := []interface{}{
+		bson.D{
+			{"item", "journal"},
+			{"instock", bson.A{
+				bson.D{
+					{"warehouse", "A"},
+					{"qty", 5},
+				},
+				bson.D{
+					{"warehouse", "C"},
+					{"qty", 15},
+				},
+			}},
+		},
+		bson.D{
+			{"item", "notebook"},
+			{"instock", bson.A{
+				bson.D{
+					{"warehouse", "C"},
+					{"qty", 5},
+				},
+			}},
+		},
+		bson.D{
+			{"item", "paper"},
+			{"instock", bson.A{
+				bson.D{
+					{"warehouse", "A"},
+					{"qty", 60},
+				},
+				bson.D{
+					{"warehouse", "B"},
+					{"qty", 15},
+				},
+			}},
+		},
+		bson.D{
+			{"item", "planner"},
+			{"instock", bson.A{
+				bson.D{
+					{"warehouse", "A"},
+					{"qty", 40},
+				},
+				bson.D{
+					{"warehouse", "B"},
+					{"qty", 5},
+				},
+			}},
+		},
+		bson.D{
+			{"item", "postcard"},
+			{"instock", bson.A{
+				bson.D{
+					{"warehouse", "B"},
+					{"qty", 15},
+				},
+				bson.D{
+					{"warehouse", "C"},
+					{"qty", 35},
+				},
+			}},
+		},
+	}
+
+	collection.InsertMany(context.Background(), docs)
 }

@@ -11,7 +11,6 @@ import (
 
 //十位激活码 一次最多生成50000个
 
-
 //前4位用做序号 为001-999 base64之后的结果
 //后6位用随机生成激活码
 
@@ -31,7 +30,7 @@ func main() {
 	//r := encoder.EncodeToString([]byte("001"))
 	//fmt.Println(r)
 	batch := fmt.Sprintf("%04d", 1)
-	for i := 0; i < 500; i++ {
+	for i := 0; i < 50000; i++ {
 		result := RandStringRunes(batch, 8)
 		fmt.Println(result)
 		if _, ok := m[result]; ok {

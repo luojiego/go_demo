@@ -1,4 +1,4 @@
-module demo
+module indexes
 
 go 1.13
 
