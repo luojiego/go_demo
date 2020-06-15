@@ -32,6 +32,8 @@ func main() {
 		"animal": "walrus",
 	}).Info("A walrus appears")
 
+	log.Info("hello")
+
 	l := log.WithFields(log.Fields{"name": "Roger"})
 
 	for {
