@@ -15,6 +15,7 @@ var (
 
 func main() {
 	log = logrus.New()
+	log.Println(os.Getenv("GuardAndSynthesis"))
 	//log.SetFormatter(&logrus.JSONFormatter{})
 	client, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL("http://192.168.196.50:9200"))
 	if err != nil {
