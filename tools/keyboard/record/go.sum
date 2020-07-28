@@ -1,0 +1,4 @@
+github.com/mattn/go-gtk v0.0.0-20191030024613-af2e013261f5 h1:GMB3MVJnxysGrSvjWGsgK8L3XGI3F4etQQq37Py6W5A=
+github.com/mattn/go-gtk v0.0.0-20191030024613-af2e013261f5/go.mod h1:PwzwfeB5syFHXORC3MtPylVcjIoTDT/9cvkKpEndGVI=
+github.com/mattn/go-pointer v0.0.1 h1:n+XhsuGeVO6MEAp7xyEukFINEa+Quek5psIR/ylA6o0=
+github.com/mattn/go-pointer v0.0.1/go.mod h1:2zXcozF6qYGgmsG+SeTZz3oAbFLdD3OWqnUbNvJZAlc=
