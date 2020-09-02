@@ -70,6 +70,7 @@ func main() {
 		}
 		return
 	}
+
 	if err := evio.Serve(events, "tcp://0.0.0.0:5000"); err != nil {
 		panic(err.Error())
 	}
