@@ -4,6 +4,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"reflect"
 )
 
 func main() {
@@ -22,9 +23,14 @@ func main() {
 	}
 
 	var ids []int
-	err = db.Get(ids, "SELECT user_id FROM account_data LIMIT 10")
+	test(ids)
+	err = db.Select(&ids, "SELECT user_id FROM account_data LIMIT 10")
 	if err != nil {
-		panic(err)
+		panic("ids: " + err.Error())
 	}
-	fmt.Println(count)
+	fmt.Println(ids)
+}
+
+func test(v interface{}) {
+	fmt.Println(reflect.TypeOf(v))
 }
