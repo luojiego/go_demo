@@ -130,16 +130,16 @@ func main() {
 
 	// insertOne()
 
-	findId(321,1234)
+	findId(321, 1234)
 }
 
 type Item struct {
-	UserId int `json:"user_id" bson:"user_id"`
-	List []int `json:"list" bson:"list"`
+	UserId int   `json:"user_id" bson:"user_id"`
+	List   []int `json:"list" bson:"list"`
 }
 
 type Data1 struct {
-	Id int `json:"id" bson:"_id"`
+	Id   int    `json:"id" bson:"_id"`
 	List []Item `json:"list" bson:"list"`
 }
 
@@ -153,8 +153,6 @@ func findId(id1, id2 int) {
 	}
 	fmt.Println("count: ", count)
 
-	collection.
-
 	one := collection.FindOne(ctx, bson.D{{"_id", id1}, {"list.user_id", id2}})
 	if one.Err() != nil {
 		fmt.Println("没有找到")
@@ -162,23 +160,23 @@ func findId(id1, id2 int) {
 		fmt.Println("我找到了")
 	}
 	/*
-	find, err := collection.Find(ctx,
-		bson.M{"_id": id1, "list.user_id": id2})
-		// options.Find().SetProjection(bson.M{"_id": 1}))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+		find, err := collection.Find(ctx,
+			bson.M{"_id": id1, "list.user_id": id2})
+			// options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-	// data := &Data1{}
-	var data bson.M
-	if err := find.Decode(&data); err != nil {
-		fmt.Printf("find decode err: %s\n", err)
-		return
-	}
-	fmt.Println(data)
+		// data := &Data1{}
+		var data bson.M
+		if err := find.Decode(&data); err != nil {
+			fmt.Printf("find decode err: %s\n", err)
+			return
+		}
+		fmt.Println(data)
 
- */
+	*/
 
 }
 
