@@ -14,4 +14,6 @@ func main() {
 	fmt.Println(strings.TrimRight(filename, ".exe"))
 	fmt.Println(strings.TrimSuffix("game.exe", ".exe"))
 	fmt.Println(strings.TrimSuffix("good!", ".exe"))
+	s := strings.TrimSpace(" A B C ")
+	fmt.Println(s, len(s))
 }
