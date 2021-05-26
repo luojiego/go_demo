@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 //用来测试服务器的防火墙是否配置OK
@@ -14,5 +15,5 @@ func main() {
 		c.String(http.StatusOK, "<h1>hello</h1>")
 	})
 	r.Static("/.well-known", "./data")
-	r.Run(":80")
+	r.Run(":8080")
 }
