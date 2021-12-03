@@ -5,3 +5,23 @@ option go_package="./testpb";
 message Test {
     repeated bool list = 1;
 }
+
+message FeedbackSaveData {
+    // @inject_tag: json:"user_id" bson:"_id"
+    uint32 userId                               = 1; // userId
+    // @inject_tag: json:"total_recharge" bson:"total_recharge"
+    double totalRecharge                        = 2; // 总充值金额
+    // @inject_tag: json:"time" bson:"time"
+    int64 time                                  = 3; // 用户反馈更新的时间
+    // @inject_tag: json:"list" bson:"list"
+    repeated FeedbackSaveItemData list          = 4; // 列表
+    // @inject_tag: json:"handler" bson:"handler"
+    uint32 handler                              = 5; // 处理者
+    // @inject_tag: json:"marker" bson:"marker"
+    uint32 marker                               = 6; // 标记者
+    // @inject_tag: json:"reply_status" bson:"reply_status"
+    bool reply_status                           = 7; // 是否已回复
+}
+
+message FeedbackSaveItemData {
+}
