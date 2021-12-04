@@ -5,3 +5,22 @@ option go_package="./testpb";
 message Test {
     repeated bool list = 1;
 }
+
+message Item1 {
+    string name = 1;
+    uint32 age = 2;
+}
+
+message M1 {
+    repeated Item1 list = 1;
+}
+
+message Item2 {
+    string name = 1;
+    uint32 age = 2;
+    string phone = 3;
+}
+
+message M2 {
+    repeated Item2 list = 1;
+}
