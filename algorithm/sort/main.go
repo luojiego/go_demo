@@ -56,37 +56,7 @@ func SelectSort(s []int) {
 	}
 }
 
-/*
-// 归并排序
-func mergeSort(s []int) {
-	mergeSortC(s, 0, len(s))
-}
-
-var count = 0
-
-func mergeSortC(s []int, min, max int) {
-	count++
-	if count >= 20 {
-		os.Exit(1)
-	}
-	if min >= max {
-		return
-	}
-	fmt.Printf("min: %d max: %d s:%+v\n", min, max, s[min:max])
-
-	middle := (min + max) / 2
-	mergeSortC(s, min, middle)
-	if (min+max)%2 == 0 {
-		mergeSortC(s, middle, max)
-	} else {
-		mergeSortC(s, middle, max)
-	}
-
-	merge(s[min:max], s[min:middle], s[middle:max])
-	fmt.Printf("min: %d max: %d s: %+v\n", min, max, s[min:max])
-}
-*/
-
+// 归并排序代码
 func mergeSort(s []int) []int {
 	if len(s) < 2 {
 		return s
@@ -119,6 +89,30 @@ func merge(first, second []int) []int {
 }
 
 // 快速排序
+func quickSort(s []int) []int {
+	if len(s) < 2 {
+		return s
+	}
+
+	q := partition(s)
+	quickSort(s[:q])
+	quickSort(s[q+1:])
+	return s
+}
+
+func partition(s []int) int {
+	left, right := 0, len(s)-1
+	pivot := rand.Intn(len(s))
+	s[pivot], s[right] = s[right], s[pivot]
+	for i := range s {
+		if s[i] < s[right] {
+			s[left], s[i] = s[i], s[left]
+			left++
+		}
+	}
+	s[left], s[right] = s[right], s[left]
+	return left
+}
 
 const (
 	size = 30
@@ -159,7 +153,7 @@ func main() {
 
 	s := makeSlice()
 	fmt.Println(s)
-	s = mergeSort(s)
+	quickSort(s)
 	if isSorted(s) == false {
 		panic("unsorted")
 	}
