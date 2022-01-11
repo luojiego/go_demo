@@ -56,6 +56,64 @@ func SelectSort(s []int) {
 	}
 }
 
+// 归并排序代码
+func mergeSort(s []int) []int {
+	if len(s) < 2 {
+		return s
+	}
+
+	first := mergeSort(s[:len(s)/2])
+	second := mergeSort(s[len(s)/2:])
+	return merge(first, second)
+}
+
+func merge(first, second []int) []int {
+	tmp := make([]int, 0, len(first)+len(second))
+	i, j := 0, 0
+	for i < len(first) && j < len(second) {
+		if first[i] < second[j] {
+			tmp = append(tmp, first[i])
+			i++
+		} else {
+			tmp = append(tmp, second[j])
+			j++
+		}
+	}
+	if i < len(first) {
+		tmp = append(tmp, first[i:]...)
+	}
+	if j < len(second) {
+		tmp = append(tmp, second[j:]...)
+	}
+	return tmp
+}
+
+// 快速排序
+func quickSort(s []int) []int {
+	if len(s) < 2 {
+		return s
+	}
+
+	q := partition(s)
+	quickSort(s[:q])
+	quickSort(s[q+1:])
+	return s
+}
+
+func partition(s []int) int {
+	left, right := 0, len(s)-1
+	pivot := rand.Intn(len(s))
+	s[pivot], s[right] = s[right], s[pivot]
+	for i := range s {
+		if s[i] < s[right] {
+			s[left], s[i] = s[i], s[left]
+			left++
+		}
+	}
+	s[left], s[right] = s[right], s[left]
+	return left
+}
+
 const (
 	size = 30
 )
@@ -68,19 +126,35 @@ func makeSlice() []int {
 	return s
 }
 
+func isSorted(s []int) bool {
+	for i := 0; i < len(s)-1; i++ {
+		if s[i] > s[i+1] {
+			return false
+		}
+	}
+	return true
+}
+
 func main() {
+	// s := makeSlice()
+	// fmt.Println(s)
+	// BubbleSort(s)
+	// fmt.Println(s)
+
+	// s = makeSlice()
+	// fmt.Println(s)
+	// InsertSort(s)
+	// fmt.Println(s)
+
+	// s = makeSlice()
+	// fmt.Println(s)
+	// SelectSort(s)
+	// fmt.Println(s)
+
 	s := makeSlice()
 	fmt.Println(s)
-	BubbleSort(s)
-	fmt.Println(s)
-
-	s = makeSlice()
-	fmt.Println(s)
-	InsertSort(s)
-	fmt.Println(s)
-
-	s = makeSlice()
-	fmt.Println(s)
-	SelectSort(s)
-	fmt.Println(s)
+	quickSort(s)
+	if isSorted(s) == false {
+		panic("unsorted")
+	}
 }

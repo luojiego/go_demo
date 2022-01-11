@@ -1,3 +1,3 @@
-module sort
+module sort1
 
 go 1.17
