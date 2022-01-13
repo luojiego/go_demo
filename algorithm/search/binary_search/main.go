@@ -137,13 +137,10 @@ func findFirstVal(s []int, val int) int {
 	for low <= high {
 		mid := low + ((high - low) >> 1)
 		if s[mid] == val {
-			i := mid
-			for ; i > 0; i-- {
-				if s[i-1] < val {
-					return i
-				}
+			if mid == 0 || s[mid-1] != val {
+				return mid
 			}
-			return i
+			high = mid - 1
 		} else if s[mid] < val {
 			low = mid + 1
 		} else {
@@ -160,13 +157,10 @@ func findLastVal(s []int, val int) int {
 	for low <= high {
 		mid := low + ((high - low) >> 1)
 		if s[mid] == val {
-			i := mid
-			for ; i < h-1; i++ {
-				if s[i+1] > val {
-					return i
-				}
+			if mid == h || s[mid+1] != val {
+				return mid
 			}
-			return i
+			low = mid + 1
 		} else if s[mid] < val {
 			low = mid + 1
 		} else {
@@ -176,41 +170,40 @@ func findLastVal(s []int, val int) int {
 	return -1
 }
 
+// s [1,2,3,4,5,6,7,8,9,10,11,12]
+// val 5
+// ret 5
 // find last gt than val in s
-func findFisrtGtVal(s []int, val int) int {
+func findFirstGtVal(s []int, val int) int {
+	low, high := 0, len(s)-1
+	// h := high
+	for low <= high {
+		mid := low + ((high - low) >> 1)
+		if s[mid] > val {
+			if mid == 0 || s[mid-1] <= val {
+				return mid
+			}
+			high = mid - 1
+		} else {
+			low = mid + 1
+		}
+	}
+	return -1
+}
+
+// s [1,2,3,4,5,6,7,8,9,10,11,12]
+// val 5
+// ret 4
+// find first lt than val in s
+func findLastLtVal(s []int, val int) int {
 	low, high := 0, len(s)-1
 	h := high
 	for low <= high {
 		mid := low + ((high - low) >> 1)
-		if s[mid] == val {
-			for ; mid < h-1; mid++ {
-				if s[mid+1] > val {
-					return mid
-				}
+		if s[mid] < val {
+			if mid == h || s[mid+1] >= val {
+				return mid
 			}
-			return mid
-		} else if s[mid] < val {
-			low = mid + 1
-		} else {
-			high = mid - 1
-		}
-	}
-	return -1
-}
-
-// find first lt than val in s
-func findLastLtVal(s []int, val int) int {
-	low, high := 0, len(s)-1
-	for low <= high {
-		mid := low + ((high - low) >> 1)
-		if s[mid] == val {
-			for ; mid > 0; mid-- {
-				if s[mid-1] < val {
-					return mid - 1
-				}
-			}
-			return mid
-		} else if s[mid] < val {
 			low = mid + 1
 		} else {
 			high = mid - 1
@@ -225,7 +218,7 @@ func main() {
 	printSlice(s)
 	fmt.Println(findFirstVal(s, 41))
 	fmt.Println(findLastVal(s, 41))
-	fmt.Println(findFisrtGtVal(s, 99))
+	fmt.Println(findFirstGtVal(s, 99))
 	fmt.Println(findLastLtVal(s, 0))
 	// fmt.Println(bsearch(s, 9947))
 	// fmt.Println(recursionBesarch(s, 13))
