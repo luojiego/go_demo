@@ -68,24 +68,27 @@ func BenchmarkReadSyncByMutex(b *testing.B) {
 }
 
 /*
-Running tool: C:\Go\bin\go.exe test -benchmem -run=^$ -bench ^(BenchmarkAddSyncByAtomic|BenchmarkReadSyncByAtomic|BenchmarkAddSyncByMutex|BenchmarkReadSyncByMutex)$ compare_with_atomic -v
-
+ go test -cpu=2,4,8,16 -benchmem -bench .
 goos: windows
 goarch: amd64
 pkg: compare_with_atomic
 cpu: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
-BenchmarkAddSyncByAtomic
-BenchmarkAddSyncByAtomic-12
-100000000	        17.97 ns/op	       0 B/op	       0 allocs/op
-BenchmarkReadSyncByAtomic
-BenchmarkReadSyncByAtomic-12
-1000000000	         0.1463 ns/op	       0 B/op	       0 allocs/op
-BenchmarkAddSyncByMutex
-BenchmarkAddSyncByMutex-12
-20964397	        57.11 ns/op	       0 B/op	       0 allocs/op
-BenchmarkReadSyncByMutex
-BenchmarkReadSyncByMutex-12
-40696588	        30.52 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddSyncByAtomic-2              92093156                15.19 ns/op            0 B/op          0 allocs/op
+BenchmarkAddSyncByAtomic-4              84246589                13.85 ns/op            0 B/op          0 allocs/op
+BenchmarkAddSyncByAtomic-8              100000000               14.86 ns/op            0 B/op          0 allocs/op
+BenchmarkAddSyncByAtomic-16             100000000               14.91 ns/op            0 B/op          0 allocs/op
+BenchmarkReadSyncByAtomic-2             1000000000               0.6405 ns/op          0 B/op          0 allocs/op
+BenchmarkReadSyncByAtomic-4             1000000000               0.3295 ns/op          0 B/op          0 allocs/op
+BenchmarkReadSyncByAtomic-8             1000000000               0.1835 ns/op          0 B/op          0 allocs/op
+BenchmarkReadSyncByAtomic-16            1000000000               0.1315 ns/op          0 B/op          0 allocs/op
+BenchmarkAddSyncByMutex-2               40963802                29.28 ns/op            0 B/op          0 allocs/op
+BenchmarkAddSyncByMutex-4               25370192                46.93 ns/op            0 B/op          0 allocs/op
+BenchmarkAddSyncByMutex-8               21890478                55.55 ns/op            0 B/op          0 allocs/op
+BenchmarkAddSyncByMutex-16              20860033                57.32 ns/op            0 B/op          0 allocs/op
+BenchmarkReadSyncByMutex-2              38162382                36.28 ns/op            0 B/op          0 allocs/op
+BenchmarkReadSyncByMutex-4              36196146                36.72 ns/op            0 B/op          0 allocs/op
+BenchmarkReadSyncByMutex-8              35981361                36.47 ns/op            0 B/op          0 allocs/op
+BenchmarkReadSyncByMutex-16             30544843                35.93 ns/op            0 B/op          0 allocs/op
 PASS
-ok  	compare_with_atomic	4.571s
+ok      compare_with_atomic     23.266s
 */
