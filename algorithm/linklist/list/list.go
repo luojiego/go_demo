@@ -34,3 +34,51 @@ func Print(l *List) {
 	}
 	fmt.Println("{nil}")
 }
+
+func MergeList(first, second *List) *List {
+	p, q := first, second
+	// ret := first
+	var ret *List
+	var tmp *List
+	for p != nil && q != nil {
+		if ret == nil {
+			ret = &List{}
+			tmp = ret
+		}
+
+		if p.Node < q.Node {
+			tmp.Node = p.Node
+			tmp.Next = &List{}
+			tmp = tmp.Next
+			p = p.Next
+		} else {
+			tmp.Node = q.Node
+			tmp.Next = &List{}
+			tmp = tmp.Next
+			q = q.Next
+		}
+	}
+
+	for p != nil {
+		tmp.Node = p.Node
+		if p.Next != nil {
+			tmp.Next = &List{}
+			tmp = tmp.Next
+			p = p.Next
+		} else {
+			break
+		}
+	}
+
+	for q != nil {
+		tmp.Node = q.Node
+		if q.Next != nil {
+			tmp.Next = &List{}
+			tmp = tmp.Next
+			q = q.Next
+		} else {
+			break
+		}
+	}
+	return ret
+}
