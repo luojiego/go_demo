@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"math/rand"
 	"strconv"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 //使用多个 goroutine 来 inc 一个value
@@ -15,12 +17,12 @@ var (
 )
 
 func init() {
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://192.168.196.50:27017"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://192.168.196.20:27017"))
 	if err != nil {
 		panic(err)
 	}
 
-	collection = client.Database("game").Collection("users1")
+	collection = client.Database("test").Collection("users1")
 }
 
 type Data struct {
@@ -43,5 +45,8 @@ func main() {
 		})
 	}
 
-	collection.InsertMany(ctx, arr)
+	// collection.InsertMany(ctx, arr)
+	// collection.InsertOne(context.Background(), bson.M{"_id": 1, "val": []int{1, 2, 3}})
+
+	collection.UpdateOne(context.Background(), bson.M{"_id": 1}, bson.M{"$push": bson.M{"val": bson.M{"$each": []int{4, 5}}}})
 }
