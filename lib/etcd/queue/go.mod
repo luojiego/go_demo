@@ -3,6 +3,7 @@ module ectd/queue
 go 1.17
 
 require github.com/coreos/etcd v3.3.27+incompatible
+replace google.golang.org/grpc => google.golang.org/grpc v1.26.0
 
 require (
 	github.com/coreos/go-semver v0.3.0 // indirect
