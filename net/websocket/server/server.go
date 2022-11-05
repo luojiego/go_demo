@@ -34,22 +34,41 @@ func root(c *gin.Context) {
 	}
 	defer client.Close()
 
-	var num int32 = 0
 	for {
-		_, buf, err := client.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		// fmt.Printf("buf: %+v\n", buf)
-		reader := bytes.NewReader(buf)
-		var val int32
-		binary.Read(reader, binary.BigEndian, &val)
-		if num != val {
-			fmt.Printf("req: %d but send: %d\n", num, val)
-		} else {
-			num++
-		}
-		// fmt.Printf("recv val: %d\n", val)
+		trySend2Client(client)
+		tryRecv(client)
 	}
+}
+
+func trySend2Client(client *websocket.Conn) {
+	var i int32 = 0
+	for ; i < 10000; i++ {
+		var buf bytes.Buffer
+		if err := binary.Write(&buf, binary.BigEndian, i); err != nil {
+			fmt.Println(err)
+		}
+		// fmt.Printf("%+v\n", buf.Bytes())
+		if err := client.WriteMessage(websocket.BinaryMessage, buf.Bytes()); err != nil {
+			fmt.Printf("err: %s\n", err)
+		}
+	}
+}
+
+func tryRecv(client *websocket.Conn) error {
+	var num int32 = 0
+	_, buf, err := client.ReadMessage()
+	if err != nil {
+		log.Println("read:", err)
+		return err
+	}
+	// fmt.Printf("buf: %+v\n", buf)
+	reader := bytes.NewReader(buf)
+	var val int32
+	binary.Read(reader, binary.BigEndian, &val)
+	if num != val {
+		fmt.Printf("req: %d but send: %d\n", num, val)
+	} else {
+		num++
+	}
+	return nil
 }
