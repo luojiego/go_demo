@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/binary"
 	"flag"
 	"fmt"
 	"log"
@@ -16,19 +18,26 @@ var (
 )
 
 func main() {
+	flag.Parse()
 	u := url.URL{Scheme: *scheme, Host: *addr, Path: *path}
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
 		log.Fatal("dial:", err)
 	}
 	defer c.Close()
-	buf := make([]byte, 10)
-	for i := 0; i < len(buf); i++ {
-		buf[i] = byte(i)
-	}
+	// buf := make([]byte, 4)
+	// for i := 0; i < len(buf); i++ {
+	// 	buf[i] = byte(i)
+	// }
 
-	for i := 0; i < 10; i++ {
-		if err := c.WriteMessage(websocket.BinaryMessage, buf); err != nil {
+	var i int32 = 0
+	for ; i < 1000; i++ {
+		var buf bytes.Buffer
+		if err := binary.Write(&buf, binary.BigEndian, i); err != nil {
+			fmt.Println(err)
+		}
+		// fmt.Printf("%+v\n", buf.Bytes())
+		if err := c.WriteMessage(websocket.BinaryMessage, buf.Bytes()); err != nil {
 			fmt.Printf("err: %s\n", err)
 		}
 	}

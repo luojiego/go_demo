@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,12 +34,22 @@ func root(c *gin.Context) {
 	}
 	defer client.Close()
 
+	var num int32 = 0
 	for {
-		_, bytes, err := client.ReadMessage()
+		_, buf, err := client.ReadMessage()
 		if err != nil {
 			log.Println("read:", err)
 			break
 		}
-		fmt.Printf("len(bytes): %d\n", len(bytes))
+		// fmt.Printf("buf: %+v\n", buf)
+		reader := bytes.NewReader(buf)
+		var val int32
+		binary.Read(reader, binary.BigEndian, &val)
+		if num != val {
+			fmt.Printf("req: %d but send: %d\n", num, val)
+		} else {
+			num++
+		}
+		// fmt.Printf("recv val: %d\n", val)
 	}
 }
