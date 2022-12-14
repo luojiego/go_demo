@@ -22,8 +22,6 @@ func ParalleWrite(data []byte) chan error {
 		}()
 	}
 
-	err = nil
-
 	f2, err := os.Create("file2")
 	if err != nil {
 		res <- err
