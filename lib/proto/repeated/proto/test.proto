@@ -1,0 +1,49 @@
+syntax="proto3";
+
+option go_package="./testpb";
+
+message Test {
+    repeated bool list = 1;
+}
+
+message Item1 {
+    string name = 1;
+    uint32 age = 2;
+}
+
+message M1 {
+    repeated Item1 list = 1;
+}
+
+message Item2 {
+    string name = 1;
+    uint32 age = 2;
+    string phone = 3;
+}
+
+message M2 {
+    repeated Item2 list = 1;
+}
+
+message FeedbackSaveData {
+    // @inject_tag: protojson:"_id" json:"_id,omitempty" bson:"_id,omitempty"
+    string _id                                  = 1;
+    // @inject_tag: protojson:"_id" json:"userId" bson:"_id"
+    uint32 userId                               = 2; // userId
+    // @inject_tag: json:"total_recharge" bson:"total_recharge"
+    double totalRecharge                        = 3; // 总充值金额
+    // @inject_tag: json:"time" bson:"time"
+    int64 time                                  = 4; // 用户反馈更新的时间
+    // @inject_tag: json:"list" bson:"list"
+    repeated FeedbackSaveItemData list          = 5; // 列表
+    // @inject_tag: json:"handler" bson:"handler"
+    uint32 handler                              = 6; // 操作者的 id
+    // @inject_tag: json:"marker" bson:"marker"
+    uint32 marker                               = 7; // 标记者的 id
+    // @inject_tag: json:"reply_status" bson:"reply_status"
+    bool reply_status                           = 8; // 是否已回复
+}
+
+message FeedbackSaveItemData {
+
+}
