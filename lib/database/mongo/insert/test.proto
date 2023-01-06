@@ -1,0 +1,16 @@
+syntax= "proto3";
+
+package test;
+
+option go_package = "./testproto";
+
+message Person {
+    string name = 1;
+    repeated string addressList = 2;
+}
+
+message User {
+    // @inject_tag: json:"id,omitempty" bson:"_id,omitempty"
+    uint32 id = 1;
+    string name = 2;
+}

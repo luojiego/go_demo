@@ -3,7 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"insert/testproto"
+	"reflect"
+	"strings"
+
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/bsoncodec"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -83,14 +89,89 @@ func insertFriends(ctx context.Context, collection *mongo.Collection) error {
 func main() {
 	ctx := context.Background()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://192.168.196.50:27017"))
+	structcodec, _ := bsoncodec.NewStructCodec(myStructTagParser)
+
+	rb := bson.NewRegistryBuilder()
+	rb.RegisterDefaultEncoder(reflect.Struct, structcodec)
+	rb.RegisterDefaultDecoder(reflect.Struct, structcodec)
+
+	client, err := mongo.Connect(ctx, options.Client().SetRegistry(rb.Build()).ApplyURI("mongodb://192.168.196.17:27018"))
 	if err != nil {
 		panic(err)
 	}
 
-	//fmt.Println(client)
-	collection := client.Database("game").Collection("friends")
-	//insertTest(ctx, collection)
+	/*
+		//fmt.Println(client)
+		collection := client.Database("game").Collection("friends")
+		//insertTest(ctx, collection)
 
-	insertFriends(ctx, collection)
+		insertFriends(ctx, collection)
+	*/
+
+	t := testproto.Person{
+		Name:        "罗杰",
+		AddressList: []string{"中国", "陕西", "西安", "新城区"},
+	}
+
+	collection := client.Database("test").Collection("person")
+
+	result, err := collection.InsertOne(context.Background(), &t)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(result)
+
+	res := &testproto.Person{}
+	id, _ := primitive.ObjectIDFromHex("63b7fbc904fb09d43a9564f9")
+	if err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(res); err != nil {
+		panic(err)
+	}
+	fmt.Println(res)
+
+	u := &testproto.User{
+		Id:   1000,
+		Name: "罗杰",
+	}
+
+	userCollection := client.Database("test").Collection("user")
+	if _, err := userCollection.InsertOne(context.Background(), u); err != nil {
+		panic(err)
+	}
+}
+
+var myStructTagParser bsoncodec.StructTagParserFunc = func(sf reflect.StructField) (bsoncodec.StructTags, error) {
+	key := strings.ToLower(sf.Name[:1]) + sf.Name[1:]
+	tag, ok := sf.Tag.Lookup("bson")
+	if !ok && !strings.Contains(string(sf.Tag), ":") && len(sf.Tag) > 0 {
+		tag = string(sf.Tag)
+	}
+	return parseTags(key, tag)
+}
+
+func parseTags(key string, tag string) (bsoncodec.StructTags, error) {
+	var st bsoncodec.StructTags
+	if tag == "-" {
+		st.Skip = true
+		return st, nil
+	}
+
+	for idx, str := range strings.Split(tag, ",") {
+		if idx == 0 && str != "" {
+			key = str
+		}
+		switch str {
+		case "omitempty":
+			st.OmitEmpty = true
+		case "minsize":
+			st.MinSize = true
+		case "truncate":
+			st.Truncate = true
+		case "inline":
+			st.Inline = true
+		}
+	}
+
+	st.Name = key
+
+	return st, nil
 }
