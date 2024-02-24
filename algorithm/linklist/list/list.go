@@ -7,78 +7,70 @@ type List struct {
 	Next *List
 }
 
-func NewList(val ...int) *List {
-	// 如果为空，则返回空链接
-	if len(val) == 0 {
-		return nil
-	}
-
-	l := &List{
-		Node: val[0],
-		Next: nil,
-	}
-
-	tmp := l
-	for i := 1; i < len(val); i++ {
-		node := &List{Node: val[i], Next: nil}
-		tmp.Next = node
-		tmp = node
-	}
-	return l
-}
-
-func Print(l *List) {
+func (l *List) Print() {
+	index := 0
 	for l != nil {
 		fmt.Printf("{val: %d}->", l.Node)
 		l = l.Next
+		if index++; index > 10 {
+			fmt.Println("...")
+			break
+		}
 	}
 	fmt.Println("{nil}")
 }
 
+func NewList(val ...int) *List {
+	head := &List{Node: -1, Next: nil}
+
+	node := head
+	for i := 0; i < len(val); i++ {
+		node.Next = &List{Node: val[i], Next: nil}
+		node = node.Next
+	}
+
+	return head.Next
+}
+
+// 非递归实现
 func MergeList(first, second *List) *List {
-	p, q := first, second
-	// ret := first
-	var ret *List
-	var tmp *List
-	for p != nil && q != nil {
-		if ret == nil {
-			ret = &List{}
-			tmp = ret
-		}
-
-		if p.Node < q.Node {
-			tmp.Node = p.Node
-			tmp.Next = &List{}
-			tmp = tmp.Next
-			p = p.Next
+	// 创建一个新的链表
+	head := NewList(-1)
+	node := head
+	for first != nil && second != nil {
+		if first.Node < second.Node {
+			node.Next = first
+			first = first.Next
 		} else {
-			tmp.Node = q.Node
-			tmp.Next = &List{}
-			tmp = tmp.Next
-			q = q.Next
+			node.Next = second
+			second = second.Next
 		}
+		node = node.Next
 	}
 
-	for p != nil {
-		tmp.Node = p.Node
-		if p.Next != nil {
-			tmp.Next = &List{}
-			tmp = tmp.Next
-			p = p.Next
-		} else {
-			break
-		}
+	if first != nil {
+		node.Next = first
+	} else {
+		node.Next = second
+	}
+	return head.Next
+}
+
+// 递归实现
+func MergeTwoList(first, second *List) *List {
+	if first == nil {
+		return second
 	}
 
-	for q != nil {
-		tmp.Node = q.Node
-		if q.Next != nil {
-			tmp.Next = &List{}
-			tmp = tmp.Next
-			q = q.Next
-		} else {
-			break
-		}
+	if second == nil {
+		return first
 	}
-	return ret
+
+	if first.Node < second.Node {
+		first.Next = MergeTwoList(first.Next, second)
+		return first
+	} else {
+		second.Next = MergeTwoList(first, second.Next)
+		return second
+	}
 }
